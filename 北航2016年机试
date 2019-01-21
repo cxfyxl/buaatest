@@ -1,0 +1,316 @@
+1.题目描述 
+给定一个数n，将这个数的各位顺序颠倒，称为逆序数m。 
+例如1234的逆序数是4321。 
+输入 
+输入一个数n(0 < n<1000000000)，已知输入开头不包含多余的0。 
+输出 
+如果m是n的k倍（k为整数），那么输出n*k=m。 
+如果m不是n的整数倍，那么输出n和n的逆序数。 
+样例输入 
+1234 
+1089 
+23200 
+样例输出 
+1234 4321 
+1089*9=9801 
+23200 00232
+
+/***2016***/
+/*
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+using namespace std;
+int getzero(int n)
+{
+    int ze=0;
+    while(n&&!(n%10))ze++,n/=10;
+    return ze;
+}
+int getlen(int k)
+{
+    int len=0;
+    while(k)
+    {
+        len++,k/=10;
+    }
+    return len;
+}
+int change(int n,int len)
+{
+    int tmp=0,t;
+    while(n)
+    {
+        t=n%10;
+        tmp+=t*(int)(pow(10*1.0,len-1));
+        len--,n/=10;
+    }
+    return tmp;
+}
+int main()
+{
+    int p;
+    int m,n,len,i;
+    cin>>p;
+    while(p--)
+    {
+        scanf("%d",&n);
+        len=getlen(n);
+        m=change(n,len);
+        int ze=getzero(n);
+        if(m%n!=0)
+        {
+            printf("%d ",n);
+            for(i=0; i<ze; i++)printf("0");
+            printf("%d\n",m);
+        }
+        else
+        {
+            printf("%d*%d=%d\n",n,m/n,m);
+        }
+    }
+    return 0;
+}
+*/
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<cstdlib>
+#include<cstring>
+using namespace std;
+int change(char a[],int len){
+    int tmp=0;
+    for(int i=0;i<len;i++){
+        tmp+=(a[i]-'0')*(int)pow(10*1.0,len-1-i);
+    }
+    return tmp;
+}
+int main(){
+    int i;
+    char n[100],m[100];
+    scanf("%s",n);
+    int len=strlen(n);
+    for(i=0;i<len;i++)m[len-1-i]=n[i];m[len]='\0';
+    int n1=change(n,len);
+    int m1=change(m,len);
+    //printf("%d %d\n",n1,n2);
+    if(m1%n1)
+    printf("%s %s",n,m);
+    else printf("%d*%d=%d\n",n1,m1/n1,m1);
+    return 0;
+}
+
+从这几个方面说： 
+1.上机给出变量范围 
+题目难得给出了输入范围，如果不知道这个是什么类型，可以用sizeof来判断下你机子相应类型的占的字节数，比如我的机子 
+sizeof(int)=4;则我的int型最大数为4*8=32位的，而题目只有10位，满足int。 
+2.逆序数字 
+这是我在atoi函数学会的，从最高位开始算，辗转乘10加个位数 
+3.输出格式 
+题目中有说输入时前面不会有无聊的‘0’，但测试用例中，12300的逆序数是00321，则代表输出是有要求的 
+简单的说一下Printf的格式
+
+原型：int printf(const char *format, …) 
+控制字符串（format）： 
+普通字符：原封不动地复制到输出流中； 
+转换说明；
+
+转换说明一般形式为： 
+%[flags] [ width] [.prec] [l] type 
+其中type为格式转换字符。
+
+* 通过参数(只有域宽)来输入所需的数据域宽* 
+int width = 10; 
+printf(“%* d”, width, result); /* 以10个字符长的宽度输出result */ 
+printf(“:%* .* d:\n”, 10, 6, 100); /* 即域宽为10，6位数，右对齐 */ 
+结果为 : 000100: 前面有四个空格
+
+printf的格式控制的完整格式： 
+% - 0 m.n l或h 格式字符 
+下面对组成格式说明的各项加以说明： 
+①%：表示格式说明的起始符号，不可缺少。 
+②-：有-表示左对齐输出，如省略表示右对齐输出。 
+③0：有0表示指定空位填0,如省略表示指定空位不填。 
+④m.n：m指域宽，即对应的输出项在输出设备上所占的字符数。N指精度。用于说明输出的实型数的小数位数。未指定n时，隐含的精度为n=6位。*对于字符串.n表示用于指定从字符串左侧开始截取的子串字符个数。 
+⑤l或h:l对整型指long型，对实型指double型。h用于将整型的格式字符修正为short型。
+
+2.题目描述 
+给一个c语言的enum定义语句，输出enum中规定的各项值。 
+输入 
+输入一个c语言的enum定义语句。 
+输出 
+输出enum中规定的各项值。 
+样例输入 
+enum BOOL{true,false}; 
+样例输出 
+true 0 
+false 1
+
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<cstdlib>
+#include<cstring>
+#include<string>
+using namespace std;
+#define inf 99999
+struct node
+{
+    char s[100];
+    int no,tip;
+};
+int k=0;
+char str[1000],st[1000];
+void qiefen()
+{
+    int i=0;
+    while(true)
+    {
+        if(str[i]=='{')
+        {
+            while(i++)
+            {
+                if(str[i]=='}')
+                {
+                    st[k]=',';
+                    return ;
+                }
+                else st[k++]=str[i];
+            }
+        }
+        i++;
+    }
+}
+int exchan(char t[],int l)
+{
+    int sum=0;
+    for(int i=0; i<l; i++)
+    {
+        sum+=(t[i]-'0')*(int)pow(10*1.0,l-1-i);
+    }
+    return sum;
+}
+int main()
+{
+    node p[500];
+    for(int i=0; i<500; i++)p[i].tip=0;
+    gets(str);
+    qiefen();
+    int lent=strlen(st);
+    char tmp[10];
+    int u=0,all=0,q=0,now=0,mm=1,rbq=0;
+    for(int i=0; i<=lent; i++)
+    {
+        if(st[i]=='=')
+        {
+            i++;
+            while(st[i]!=',')
+            {
+                tmp[u++]=st[i++];
+                //printf("")
+            }
+            tmp[u]='\0';
+            //printf("%s\n",tmp);
+            int y=exchan(tmp,u);
+            p[all].tip=1;
+            //p[all].no=y;
+            now=y;
+            mm=now;
+            u=0,i--;//i必须退回','前一个字符
+        }
+        else if(st[i]==',')
+        {
+            if(now==0&&!rbq)
+            {
+                p[all].no=0,rbq=1;
+            }
+            else if(!p[all].tip)p[all].no=++now;
+            else p[all].no=mm;
+            all++,q=0; //结构体数组下标，数组元素下标都要置零
+        }
+        else p[all].s[q++]=st[i];
+    }
+    for(int i=0; i<all; i++)
+        printf("%s %d\n",p[i].s,p[i].no);
+    return 0;
+}
+//enum date{JAN=1,FEB,MAR,APR,MON=1,TUE,SUN,found=1949}
+/*
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<cstdlib>
+#include<cstring>
+#include<string>
+using namespace std;
+int main()
+{
+    int i=0,a[5]= {1,2,3,4,5};
+    do
+    {
+        printf("1\n");
+    }
+    while(a[i++]!=4);
+    return 0;
+}
+*/
+
+1.enum定义
+
+enum 即枚举，当某些量仅由有限个数据值来组成时，通常用枚举类型。枚举类型描述的是一组整型值 的集合。 
+类似：enum response{no,yes,none}； 
+其中no,yes,none都成为枚举常量，即不可对其赋值！！ 
+除非特别指定，一般第一个枚举常量的值为0，然后依次递增1，同时若明确定义枚举常量的值，那么这个的下一个枚举常量如果没有被指定值，则默认为前者递增1（说的我都绕湖涂了- -）
+
+所以思路 就是，首先找到变量的标志开始符’{‘，然后以逗号为分隔点，处理每一小段，如果赋值就用atoi来转换成要赋的值，如果默认就按照所在位置自动赋值。
+
+2.string字符串和char数组的输入输出，常用操作函数
+
+在c中没有提供字符串数据类型（在c++中可以直接使用string类型），因此需要用char数组来储存string字符串，只有当最后一个字符是’\0’才标志为字符串。
+
+字符串赋值：要么在定义数组时直接初始化 char str[10]=”hello”;要么使用字符串处理函数strcpy(str,”Hello”)；
+
+字符串输入： 
+1.按%c一个字符一个字符的输入，for(i=0;str[i]!=’\0’;i++) printf(“%c”,str[i]); 
+2.按%s作为一个整体的字符串输入，但有坏处 scanf会在遇到空白字符（空格，回车符或者制表符）停止，所以没办法输入带空格的句子，弃之； 
+3.gets()用于从键盘输入一个字符串（包括空格符），但不能限制输入字符串的长度，极其容易引起缓冲区溢出，scanf也有这个问题。 
+4. fget(name,sizeof(name),stdin);限制输入字符串长度不超过数组大小。
+
+字符串输出： 
+同字符串输入对应，gets对应puts，用于从括号内的参数开始的地址依次输出存储单元中的字符，遇到第一个’\0’停止 
+当然也可以%s 或者%c输出
+
+常用操作函数 
+求字符串长度 strlen(str）；// 返回字符串str的实际长度，不包括’\0’ 
+字符串赋值 strcpy(str1,str2)；// str2复制到str1，注意不要越界 
+strcmp（str1,str2);//比较 
+strcat (str1,str2);//连接
+
+3.字符串与单个字符的赋值问题
+
+字符串对单个字符赋值操作可以使用赋值运算符=，但赋值运算符不能用于字符串的赋值操作，字符串只能使用strcpy
+4.ctype头文件 
+字符处理函数库，都是对int型进行操作 
+5.atoi转换函数 
+必须包含头文件stdlib将数字字符串转换为整型或浮点型的数值，但我用的时候不能转换，就写了一个简单的转换函数，没有排除边界情况。
+
+6.创建动态的数组，关于new，malloc，calloc
+
+首先我不知道c中能不能用new，反正我是编译出来了…new完记得delete 
+说说malloc和ralloc 
+在创建动态数组的时候很有用，但要注意你创建出来的是一个指针，指向你创建的空间的首地址，还有就是用完要free
+
+malloc 用于分配若干字节的内存空间，返回指向该内存首地址的指针。 
+申请动态一维数组：
+int *p=NULL;
+p=(int *)malloc(n *sizeof(int));
+if(p==NULL) exit(1);
+free(p);
+
+calloc用于给若干同一类型的数据项分配连续的存储空间，每个数据项的长度单位为字节，系统对calloc分配的存储空间自动初始化为0，可用于申请二维数组
+int *p=NULL;
+p=(int *)calloc( m *  n,sizeof(int));
+if(p=NULL) exit(1);
+free(p);//寻址时，必须当作一维数组来寻址，p是指向这个二维动态数组的列指针
+scanf("%d",&p[i*n+j]);// *(p+i *n+j)
+
