@@ -1,0 +1,268 @@
+1.【题意】 
+如果对于两个大于 1 的正整数 x 和 y，x 除了本身以外的因子之和等于 y，y 除了本身以外的 
+因子之和等于 x，则称 x 和 y 是一对相亲数。比如 220 除了本身以外的因子之和 110+55+44+22+20+11+10+5+4+2+1=284，而 284 除了 
+本身以外的因子之和 142+71+4+2+1=220，则 220 和 284 就是一对相亲数。 
+请你编写一个程序计算 x 和 y 分别除了本身以外的因子之和，并判断 x 和 y 是不是一对相亲数。x 和 y 为大于 1 的 int 范围内的整数。 
+【输入】 
+x 和 y，空格隔开。 
+【输出】 
+第一行输出 x，一个逗号，x 的除了本身以外的因子之和的计算过程（见题意，要求降序输出每个因子），不要有多余的空格。 
+第二行输出 y，一个逗号，y 的除了本身以外的因子之和的计算过程（见题意，要求降序输出每个因子），不要有多余的空格。 
+第三行，如果 x 和 y 是一对相亲数输出 1，否则输出 0。文末换行可有可无。 
+【样例 1】 
+标准输入 
+220 284 
+标准输出 
+220,110+55+44+22+20+11+10+5+4+2+1=284 
+284,142+71+4+2+1=220 
+1 
+【样例 2】 
+标准输入 
+84 1120 
+标准输出 
+11849296+148+74+37+32+16+4+2+1=1210 
+1220,560+280+224+160+140+112+80+70+56+40+35+32+28+20
+
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<cstdlib>
+#include<cstring>
+#include<string>
+using namespace std;
+#define inf 99999
+int main()
+{
+    int da[1000],db[1000];
+    int a,b,i,ka=0,kb=0,suma=0,sumb=0,ta,tb;
+    scanf("%d %d",&a,&b);
+    ta=a,tb=b;
+    if(ta==0){da[ka++]=1,suma=1;}
+    for(i=1; i<=ta/2; i++)
+    {
+        if(ta%i==0)
+        {
+            da[ka++]=i;
+            suma+=i;
+        }
+    }
+    if(tb==0){db[kb++]=1,sumb=1;}
+    for(i=1; i<=tb/2; i++)
+    {
+        if(tb%i==0)
+        {
+            db[kb++]=i;
+            sumb+=i;
+        }
+    }
+    printf("%d,",a);
+    for(i=0; i<ka-1; i++)printf("%d+",da[i]);
+    printf("%d=%d\n",da[ka-1],suma);
+    printf("%d,",b);
+    for(i=0; i<kb-1; i++)printf("%d+",db[i]);
+    printf("%d=%d\n",db[kb-1],sumb);
+    if(a==sumb&&b==suma)printf("1\n");
+    else printf("0\n");
+    return 0;
+}
+
+2.【题意】 
+在计算机屏幕上，有 N 个窗口。窗口的边界上的点也属于该窗口。窗口之间有层次的区别， 
+在多于一个窗口重叠的区域里，只会显示位于顶层的窗口里的内容。当你用鼠标点击某个点 
+的时候，若其在窗口内，你就选择了处于被点击位置所属的最顶层窗口，并且这个窗口就会 
+被移到所有窗口的顶层，而剩余的窗口的层次顺序不变，如果你点击的位置不属于任何窗口 
+计算机就会忽略你这次点击。编写一个程序模拟点击窗口的过程：先从标准输入读入窗口的 
+个数，窗口编号和位置（以窗口的左上角和右下角的坐标表示，先输入的窗口层次高），然后 
+3 
+读入点击的次数和位置（以点击的坐标表示），编写程序求得经过上述点击后的窗口叠放次序。 
+【假设】： 
+1、屏幕左下角作为 X 轴和 Y 轴坐标原点，即坐标为（0，0），所有输入的坐标 
+数值都是整数，并且都大于等于 0，小于等于 1000。 
+2出窗口的叠放次序时从最后点击后最顶层的窗口编号开始按层次依次输出； 
+3、输入的窗口个数大于 0 并且小于等于 10，点击次数大于 0 并且小于等于 20。 
+【输入】 
+第一行窗口个数 n，接下来 n 行每行一个窗口的编号、左下角坐标、右上角坐标。 
+接下来一行点击次数 k，接下来 k 行每行一个点击坐标。 
+【输出】 
+一行 n 个数字，表示 K 次点击后按层次排列的窗口编号，空格隔开。 
+行末空格与文末换行可有可无。 
+【样例】 
+标准输入 
+4 
+1 43 31 70 56 
+2 50 24 80 50 
+3 23 13 63 42 
+4 57 36 90 52 
+5 
+47 28 
+73 40 
+68 32 
+82 43 
+
+82 43 
+
+标准输入 
+4 2 3 1
+
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<cstdlib>
+#include<cstring>
+#include<string>
+#include<algorithm>
+using namespace std;
+#define inf 99999
+struct node{
+    int id,lx,ly,rx,ry;
+}point[500];
+int n,m;
+bool cmp(node a,node b){
+    return a.id<b.id;
+}
+void arrange(){
+    sort(point,point+n,cmp);
+}
+int main(){
+    int i,j,k1,k2,k3,k4,k5,top,x,y;
+    scanf("%d",&n);
+    for(i=0;i<n;i++){
+        scanf("%d%d%d%d%d",&point[i].id,&point[i].lx,&point[i].ly,&point[i].rx,&point[i].ry);
+    }
+    scanf("%d",&m);
+    for(i=0;i<m;i++){
+        scanf("%d%d",&x,&y);
+        top=0;
+        for(j=0;j<n;j++){
+            if(x<=point[j].rx&&y<=point[j].ry&&x>=point[j].lx&&y>=point[j].ly){
+                if(j>=top){top=j;break;}//找最上边满足点击的窗口
+            }
+        }
+        if(top!=0){
+            k1=point[top].id,k2=point[top].lx,k3=point[top].ly,k4=point[top].rx,k5=point[top].ry;
+            for(j=top-1;j>=0;j--){
+                   point[j+1].id=point[j].id;
+                   point[j+1].lx=point[j].lx;
+                   point[j+1].ly=point[j].ly;
+                   point[j+1].rx=point[j].rx;
+                   point[j+1].ry=point[j].ry;
+            }
+            point[0].id=k1,point[0].lx=k2,point[0].ly=k3,point[0].rx=k4,point[0].ry=k5;
+        }
+    }
+    for(i=0;i<n;i++){
+        printf("%d ",point[i].id);
+    }
+    printf("\n");
+    return 0;
+}
+/*
+4
+1 43 31 70 56
+2 50 24 80 50
+3 23 13 63 42
+4 57 36 90 52
+4
+47 28
+73 40
+68 32
+82 43
+*/
+/*if(top!=0){
+           // k=point[top].id;
+            for(j=0;j<n;j++){
+                    if(j!=top&&point[j].id<point[top].id)
+                   point[j].id++;
+            }
+            point[top].id=1;
+        }
+        */
+
+3.【简要题意】 
+输入一篇可能未经排版的文章，挑选出其中的单词【单词中不包含“（”等特殊符号】，然后按字典序输出。
+
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<cstdlib>
+#include<cstring>
+#include<string>
+#include<algorithm>
+#include<map>
+using namespace std;
+#define inf 99999
+int trie[5000][27],tol,tot;
+string str[2000];
+int main()
+{
+    map<string,int> mp;
+    int i,j,k;
+    char c;
+    i=0,j=0;str[0]="";
+    while(scanf("%c",&c)!=EOF)
+    {
+        //cout<<c<<endl;
+        if((c>='a'&&c<='z')||(c>='A'&&c<='Z'))
+        {
+            str[i]+=c;
+        }
+        else if(c==' '||c==','||c=='.'){str[i]+='\0';i++;str[i]="";
+        //cout<<i<<endl;
+        }
+    }
+    tol=i;
+    for(k=0;k<tol;k++){
+        mp[str[k]]++;
+    }
+    map<string,int>::iterator it;
+    for(it=mp.begin();it!=mp.end();it++){
+        cout<<it->first<<"="<<it->second<<endl;
+    }
+    return 0;
+}
+/*
+#include <iostream>
+#include <string>
+#include <map>
+using namespace std;
+main()
+{
+    string s,s1,s2;
+    map<string,int> mmap;
+    cout<<"请输入句子："<<endl;
+    while(cin>>s)
+    {
+        if(s=="#")
+            break;
+        int k=0;
+        for(int i=0;i!=s.length();++i)
+        {
+            if(s[i]==',')
+            {
+                s1=s.substr(0,i);//表示从字符串s中抽取从0下标开始的指定数目i的字符串给s1
+                s2=s.substr(i+1,s.length());
+                mmap[s1]++;
+                mmap[s2]++;
+                k=1;
+            }
+            if(s[i]=='.')
+            {
+                s1=s.substr(0,i);
+                mmap[s1]++;
+                k=2;
+            }
+        }
+        if(k==0)
+            mmap[s]++;
+    }
+    map<string,int>::iterator it;
+    cout<<"统计结果："<<endl;
+    for(it=mmap.begin();it!=mmap.end();++it)
+    {cout<<it->first<<"="<<it->second<<endl;}
+    //return 0;
+}  */
+/*
+i like you,i come from China,i want you.
+*/
+
+
