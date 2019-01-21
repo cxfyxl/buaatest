@@ -1,0 +1,131 @@
+1.某数分解成若干连续整数的和
+
+15=1+2+3+4+5
+
+15=4+5+6
+
+15=7+8
+
+不能分解则输出NONE
+
+#include<stdio.h>
+int main(){
+	int i,j,k,n,sum;
+	bool f=0;
+    scanf("%d",&n);
+	for(i=1;i<n;i++)
+		for(j=i+1;j<n;j++){
+           sum=(j-i+1)*(j+i)/2;
+		   if(sum==n){
+			   f=1;
+			   for(k=i;k<=j;k++)printf("%d ",k);
+		   printf("\n");
+		   }
+		   
+		}
+		if(f==0){
+			printf("NONE\n");
+		}
+	return 0;
+}
+
+2.小岛面积 
+1 1 1 1 1 1 
+1 1 0 0 0 1 
+1 0 0 0 1 0 
+1 1 0 1 1 1 
+0 1 0 1 0 0 
+1 1 1 1 1 1 
+上面矩阵的中的1代表海岸线，0代表小岛。求小岛面积（即被1中包围的0的个数）。注意：仅求这样的0，该0所在行中被两个1包围，该0所在列中被两个1包围。 
+输入： 
+第一行输入一个整数N，表示输入方阵的维数,输入一个N维方阵 
+输出： 
+小岛面积 
+样例输入： 
+6 
+1 1 1 1 1 1 
+1 1 0 0 0 1 
+1 0 0 0 1 0 
+1 1 0 1 1 1 
+0 1 0 1 0 0 
+1 1 1 1 1 1 
+样例输出： 
+
+8
+#include<stdio.h>
+#include<string.h>
+int main(){
+	int n,i,j,tol=0;
+	int a[100][100],dir[100][4];
+	scanf("%d",&n);
+	for(i=0;i<n;i++)
+		for(j=0;j<n;j++){
+			scanf("%d",&a[i][j]);
+		}
+    memset(dir,-1,sizeof(dir));
+	for(i=0;i<n;i++)
+		for(j=0;j<n;j++)
+		{
+            if(a[i][j]==1){
+				if(dir[i][0]==-1)dir[i][0]=j;
+				if(dir[j][2]==-1)dir[j][2]=i;
+				dir[i][1]=j;
+				dir[j][3]=i;
+			}
+		}
+		for(i=0;i<n;i++){
+			for(j=0;j<n;j++)
+			{
+				if(a[i][j]==0){
+					if(i<dir[j][3]&&i>dir[j][2]&&j<dir[i][1]&&j>dir[i][0])
+						tol++;
+				}
+			}
+		}
+		printf("%d\n",tol);
+	return 0;
+}
+
+3.统计关键字出现位置 
+
+输入： 
+一行标准c语言代码（字符个数小于300），统计出该字符串中关键字的if，while，for所在的位置，按照关键字出现的顺序依次输出。注意双引号内的不需要统计。 
+输入：一行标准c语言代码，字符个数小于300 
+输出： 
+关键字if，while，for对应的位置，按照关键字出现的顺序依次输出。输出格式为：关键字，后跟冒号，然后是出现的位置。扫描到关键字就输出，每个输出占一行。
+
+#include<stdio.h>
+#include<string.h>
+int judge(char c){
+    if(c>='0'&&c<='9')return 1;
+	else if(c>='a'&&c<='z')return 2;
+	else if(c=='_')return 3;
+	else if(c=='"')return 4;
+	else return 5;
+}
+int main(){
+	char a[500];
+	//FILE *fp=fopen("data.txt","r");
+	gets(a);
+	puts(a);
+	int i,len=strlen(a)-1,yin=0,qian=0;
+	for(i=0;i<len;i++){
+		if(judge(a[i])==4||yin==0){
+			if(judge(a[i])==5)qian=1;
+		    else if(qian==1&&judge(a[i])==2){
+                  if(a[i]=='i'&&a[i+1]=='f'&&judge(a[i+2])==5&&i+2<len)printf("if:%d\n",i+1);
+	              else if(a[i]=='w'&&a[i+1]=='h'&&a[i+2]=='i'&&a[i+3]=='l'&&a[i+4]=='e'&&judge(a[i+5])==5&&i+5<len)printf("while:%d\n",i+1);
+	              else if(a[i]=='f'&&a[i+1]=='o'&&a[i+2]=='r'&&judge(a[i+3])==5&&i+3<len)printf("for:%d\n",i+1);
+	              else qian=0;
+			}
+		    else if(judge(a[i])==4){
+			if(yin==0){
+               yin=1;
+			}
+			else yin=0;
+			}
+			
+		}
+	}
+	return 0;
+}
