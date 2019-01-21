@@ -1,0 +1,297 @@
+1.从一个无序不重复数组中，输出中间的数和它在数组中的次序（从1开始）如果是偶数个元素，则输出两个，奇数则输出中间一个
+
+#include<iostream>
+#include<cstdio>
+#include<cmath>
+#include<cstdlib>
+#include<cstring>
+#include<string>
+#include<algorithm>
+#include<map>
+using namespace std;
+#define inf 99999
+int cmp(const void *a,const void *b){
+    return *(double *)a-*(double *)b;
+}
+int main(){
+    int i,n;
+    double a[100];
+    scanf("%d",&n);
+    for(i=0;i<n;i++){
+        scanf("%lf",&a[i]);
+    }
+    qsort(a,n,sizeof(a[0]),cmp);
+    if(n%2)printf("%.2lf\n",a[n/2]);
+    else printf("%.2lf\n",(a[n/2]+a[n/2-1])/2);
+    return 0;
+}
+
+2.类似于词法分析 
+输入两行语法正确的C语言语句，第一行是定义变量，第二行是基本C语言表达式，输出第二行中没有在第一行被定义的变量名，如果是数组和指针，只输出数组名或指针名 
+输入： 
+int a,b ,_ x ,_ y,Min,MAx; 
+result=a+b/2*_x+Min; 
+
+输出：result
+
+#include<iostream>
+#include<cstdio>
+#include<cstdlib>
+#include<cstring>
+using namespace std;
+bool cmp(char c){
+	if((c>='a'&&c<='z')||(c>='A'&&c<='Z')||c=='_'||(c>='0'&&c<='9'))
+		return true;
+	return false;
+}
+int main(){
+	int i=0,j,tol,k;
+    char s1[1000],s2[1000],aim[1000][20],tmp[20];
+	cin.getline(s1,1000);
+	cin.getline(s2,1000);
+	tol=0,k=0;
+	int len1=strlen(s1),len2=strlen(s2),lian=0;
+	while(s1[i]==' ')i++;while(cmp(s1[i]))i++;while(s1[i]==' ')i++;
+	j=i;
+    for(i=j;i<len1;i++){
+		if(s1[i]==' '){while(s1[i]==' ')i++;i--;}
+        else if(s1[i]=='*')continue;
+        else if(cmp(s1[i]))aim[tol][k++]=s1[i];
+		else if(s1[i]==','||s1[i]==';'||s1[i]=='='){aim[tol][k]='\0',tol++,k=0;}
+		else if(s1[i]=='['){
+			while(s1[i]!=']')i++;
+			i--;
+		}
+	}
+	//for(i=0;i<tol;i++)printf("%s\n",aim[i]);
+	int p=0,flag=0;
+	for(i=0;i<len2;i++){
+		if(cmp(s2[i])){
+			tmp[p++]=s2[i];
+		}
+		else if(s2[i]=='['){
+            while(s2[i]==']')i++;
+			i--;
+		}
+		else if(s2[i]=='='||s2[i]=='+'||s2[i]=='-'||s2[i]=='*'||s2[i]=='/'||s2[i]==','||s2[i]==';'){
+			if(s2[i+1]>='0'&&s2[i+1]<='9'){while(s2[i+1]>='0'&&s2[i+1]<='9')i++;i++;}
+             tmp[p]='\0';
+             for(j=0;j<tol;j++){
+				 if(strcmp(tmp,aim[j])==0){flag=1;}
+			 }
+			 if(!flag)printf("%s ",tmp);
+			 flag=0;
+			 p=0;memset(tmp,'\0',sizeof(tmp));
+		}
+	}
+	printf("\n");
+	return 0;
+}
+/*
+int a,b ,_x ,_y,Min,MAx; 
+result=a+b/2*_x+Min; 
+*/
+
+3.二叉树的层次遍历 
+题目有些复杂 
+1.用什么数据结构存放二叉树数据 
+2.判断任意两个结点是否同辈 
+
+3同辈则输出共同祖先以及所在层，不同辈则从大往小输出结点值并输出其相差的辈数。
+
+注:这里我没有处理字符串，直接按照给定数目输入亲戚关系
+
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<queue>
+#include<cmath>
+using namespace std;
+struct node{
+	char name[20];
+	int deep;
+    node *left,*right;
+};
+node *q[1005],*tmp;
+char na1[20],na2[20],na3[20];
+int deep;
+node *creatTree(int n){
+	int front=1,rear=0;
+    node *root,*s,*l,*r;
+	root=NULL;
+    while(n--){
+       scanf("%s%s%s",na1,na2,na3);
+	   s=NULL,l=NULL,r=NULL;
+	   if(rear==0){
+       s=(node *)malloc(sizeof(node));
+       strcpy(s->name,na1);
+	   s->left=NULL;s->right=NULL;
+       q[++rear]=s;
+	    root=s;
+	   }
+	   s=q[front++];
+       l=(node *)malloc(sizeof(node));
+       strcpy(l->name,na2);
+	   l->left=NULL;
+	   l->right=NULL;
+	   s->left=l;
+	   q[++rear]=l;
+	   r=(node *)malloc(sizeof(node));
+       strcpy(r->name,na3);
+	   r->left=NULL;
+	   r->right=NULL;
+	   s->right=r;
+	   q[++rear]=r;
+	}
+	return root;
+}
+ 
+void dfs(node *p,char na[],int h){
+	if(p==NULL)return ;
+	if(strcmp(na,p->name)==0){
+       tmp=p;deep=h;
+	}
+	dfs(p->left,na,h+1);
+	dfs(p->right,na,h+1);
+}
+node *lca(node *root,node *na1,node *na2){
+    if(root==NULL)return NULL;
+	if(root==na1||root==na2)return root;
+	node *ll=lca(root->left,na1,na2);
+	node *rr=lca(root->right,na1,na2);
+    if(ll&&rr)return root;
+	else if(ll)return ll;
+	else if(rr)return rr;
+	else return NULL;
+}
+int main()
+{
+    int i,n;
+	node *aim1,*aim2;
+    scanf("%d",&n);
+	node *root=creatTree(n);
+	scanf("%s%s",na1,na2);
+    dfs(root,na1,1);
+	aim1=tmp,aim1->deep=deep;
+	dfs(root,na2,1);
+	aim2=tmp,aim2->deep=deep;
+    node *LCA=lca(root,aim1,aim2);
+    printf("%s %d\n",LCA->name,abs(aim1->deep-aim2->deep));
+    return 0;
+}
+
+/*
+4
+ye shu ba
+shu ge mei1
+ba self mei2
+ge son1 son2
+*/
+/*
+           ye
+      shu       ba
+   ge  mei1 self  mei2
+son1 son2
+*/
+闲来无事，修订了一下，加上了处理亲戚关系字符串的代码。
+
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<queue>
+#include<cmath>
+using namespace std;
+struct node{
+	char name[20];
+	int deep;
+    node *left,*right;
+};
+node *q[1005],*tmp;
+char fan[1000],na1[20],na2[20],na3[20];
+int deep,stop;
+void getword(char tmp[]){
+    int i,j;
+	stop=0;
+	for(i=0;tmp[i]!=' ';i++)
+       na1[i]=tmp[i];
+	stop++,i++;
+	int k=0;
+	for(j=i;tmp[j]!=' '&&tmp[j]!='\0';j++)
+	   na2[k++]=tmp[j];
+    stop++;
+	if(tmp[j]=='\0'){return ;}
+	else {
+		j++;
+		strcpy(na3,tmp+j);
+		stop++;
+	}
+}
+node *creatTree(){
+	int front=1,rear=0;
+    node *root,*s,*l,*r;
+	root=NULL;
+    while(true){
+       //scanf("%s%s%s",na1,na2,na3);
+	   gets(fan);
+	   //getchar();
+	   getword(fan);
+	   if(stop==2)break;
+	   s=NULL,l=NULL,r=NULL;
+	   if(rear==0){
+       s=(node *)malloc(sizeof(node));
+       strcpy(s->name,na1);
+	   s->left=NULL;s->right=NULL;
+       q[++rear]=s;
+	    root=s;
+	   }
+	   s=q[front++];
+       l=(node *)malloc(sizeof(node));
+       strcpy(l->name,na2);
+	   l->left=NULL;
+	   l->right=NULL;
+	   s->left=l;
+	   q[++rear]=l;
+	   r=(node *)malloc(sizeof(node));
+       strcpy(r->name,na3);
+	   r->left=NULL;
+	   r->right=NULL;
+	   s->right=r;
+	   q[++rear]=r;
+	}
+	return root;
+}
+ 
+void dfs(node *p,char na[],int h){
+	if(p==NULL)return ;
+	if(strcmp(na,p->name)==0){
+       tmp=p;deep=h;
+	}
+	dfs(p->left,na,h+1);
+	dfs(p->right,na,h+1);
+}
+node *lca(node *root,node *na1,node *na2){
+    if(root==NULL)return NULL;
+	if(root==na1||root==na2)return root;
+	node *ll=lca(root->left,na1,na2);
+	node *rr=lca(root->right,na1,na2);
+    if(ll&&rr)return root;
+	else if(ll)return ll;
+	else if(rr)return rr;
+	else return NULL;
+}
+int main()
+{
+    int i,n;
+	node *aim1,*aim2;
+    //scanf("%d",&n);
+	node *root=creatTree();
+	//scanf("%s%s",na1,na2);
+    dfs(root,na1,1);
+	aim1=tmp,aim1->deep=deep;
+	dfs(root,na2,1);
+	aim2=tmp,aim2->deep=deep;
+    node *LCA=lca(root,aim1,aim2);
+    printf("%s %d\n",LCA->name,abs(aim1->deep-aim2->deep));
+    return 0;
+}
+//现在就可以忽略开头那个n了
