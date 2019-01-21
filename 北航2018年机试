@@ -1,0 +1,126 @@
+1.忘了题目了，线段拼接？
+2.按要求输入三叉树，给两个节点，输出是后序遍历的第几个和两节点的高度差？
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <cstdlib>
+using namespace std ;
+typedef long long ll;
+struct node{
+    int id,order,height;//编号,后序遍历次序，节点层次
+    node *left,*right,*mid;//左右中子树
+}*tree[500];
+struct mrr{
+    int id,order,height;
+}ans[500];
+int dan[500],shuang[500],san[500];//收集节点id
+int three=0,two=0,one=0;//最大分支数统计
+int cmp(mrr a,mrr b){
+    return a.height>b.height;
+}
+node *inserted(int id){
+    tree[id]=(node *)malloc(sizeof(node));
+    tree[id]->id=id;
+    tree[id]->left=tree[id]->mid=tree[id]->right=NULL;
+    return tree[id];
+}
+node *create(int n){//按题意构造三叉树
+    node *p,*root;
+    int a,b,c,d,flag=1;
+    while(n--){
+       scanf("%d%d%d%d",&a,&b,&c,&d);
+       if(b&&c&&d)san[three++]=a;
+       else if((b&&c)||(d&&b)||(c&&d))shuang[two++]=a;
+       else dan[one++]=a;
+       if(flag){//首次输入确定树根
+          tree[a]=(node *)malloc(sizeof(node));
+          tree[a]->id=a;
+          if(b!=0)
+          tree[a]->left=inserted(b);
+          else tree[a]->left=NULL;
+
+          if(c!=0)
+          tree[a]->mid=inserted(c);
+          else tree[a]->mid=NULL;
+
+          if(d!=0)
+          tree[a]->right=inserted(d);
+          else tree[a]->right=NULL;
+
+          root=tree[a];
+          flag=0;
+       }
+       else {
+          if(b!=0)
+          tree[a]->left=inserted(b);
+          else tree[a]->left=NULL;
+
+          if(c!=0)
+          tree[a]->mid=inserted(c);
+          else tree[a]->mid=NULL;
+
+          if(d!=0)
+          tree[a]->right=inserted(d);
+          else tree[a]->right=NULL;
+       }
+    }
+    return root;
+}
+int ci=1;
+void houxu(node *p){//后序遍历
+    if(p!=NULL){
+        houxu(p->left);
+        houxu(p->mid);
+        houxu(p->right);
+        //printf("%d %d\n",p->id,ci);
+        p->order=ci++;
+    }
+}
+int t;//ans数组的计数器
+void shugao(node *p,int id,int h){//求节点的高度
+    if(p==NULL)return ;
+	if(id==p->id){
+       ans[t].id=p->id;
+       ans[t].order=p->order;
+       ans[t++].height=h;
+       return ;
+	}
+	shugao(p->left,id,h+1);
+	shugao(p->mid,id,h+1);
+	shugao(p->right,id,h+1);
+}
+int main()
+{
+    int i,n;
+    scanf("%d",&n);
+    node *root=create(n);
+    houxu(root);
+    if(three>0){
+        for(i=0;i<three;i++){
+           shugao(root,san[i],1);
+        }
+        sort(ans,ans+t,cmp);
+        int tmp=ans[0].height;
+        for(i=0;ans[i].height==tmp;i++)
+            printf("%d %d\n",ans[i].id,ans[i].order);
+    }
+    else if(two>0){
+        for(i=0;i<two;i++){
+           shugao(root,shuang[i],1);
+        }
+        sort(ans,ans+t,cmp);
+        int tmp=ans[0].height;
+        for(i=0;ans[i].height==tmp;i++)
+            printf("%d %d\n",ans[i].id,ans[i].order);
+    }
+    else {
+        for(i=0;i<one;i++){
+           shugao(root,dan[i],1);
+        }
+        sort(ans,ans+t,cmp);
+        int tmp=ans[0].height;
+        for(i=0;ans[i].height==tmp;i++)
+            printf("%d %d\n",ans[i].id,ans[i].order);
+    }
+    return 0;
+}
