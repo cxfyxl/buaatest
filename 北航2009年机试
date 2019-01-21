@@ -1,0 +1,117 @@
+1.题目描述： 
+立方根的逼近迭代方程是 y(n+1) = y(n)*2/3 + x/(3*y(n)*y(n)),其中y0=x.求给定的x经过n次迭代后立方根的值。 
+输入： 
+输入有多组数据。 
+每组一行，输入x n。 
+输出： 
+迭代n次后的立方根，double精度,保留小数点后面六位。 
+样例输入： 
+3000000 28 
+样例输出： 
+144.224957
+
+#include<stdio.h>
+ 
+int main()
+{
+    int x,n;
+    double result;
+    while(scanf("%d%d",&x,&n)!=EOF)
+    {
+        result=x;
+        // y(n+1) = y(n)*2/3 + x/(3*y(n)*y(n))
+        for(int i=1;i<=n;i++)
+        {
+            result=result*2/3+x/(3*result*result);
+        }
+        printf("%.6f\n",result);
+    }
+    return 0;
+}
+
+2.题目描述： 
+输入一个数组的值,求出各个值从小到大排序后的次序。 
+输入： 
+输入有多组数据。 
+每组输入的第一个数为数组的长度n(1<=n<=10000),后面的数为数组中的值,以空格分割。 
+输出： 
+各输入的值按从小到大排列的次序(最后一个数字后面没有空格)。 
+样例输入： 
+4 
+-3 75 12 -3 
+样例输出： 
+1 3 2 1
+
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+#include<set>
+using namespace std;
+int a[10005],b[10005];
+int binary_search(int n,int k){
+    int low=0,high=n-1,mid;
+	while(low<=high){
+		mid=(low+high)/2;
+		if(a[mid]==k)return mid;
+		else if(a[mid]<k)low=mid+1;
+		else high=mid-1;
+	}
+	return -1;
+}
+int main(){
+    int n,i,k;
+	set<int> st;//不用排序，自动去重
+	set<int>::iterator it;
+	cin>>n;
+	st.clear();
+	for(i=0;i<n;i++){
+		cin>>a[i];
+        st.insert(a[i]);
+	}
+	for(k=0,it=st.begin();it!=st.end();it++){
+          b[k++]=*it;
+	}
+	for(i=0;i<n;i++){
+		cout<<upper_bound(b,b+k,a[i])-b<<" ";//lower_bound(a,a+n,key)-a 返回下标，upper_bound-a返回逻辑位置，binary_search (0 1)返回是否存在这个关键字
+	}
+	cout<<endl;
+	return 0;
+}
+
+3.字符串的查找删除 
+给定文件filein.txt 按要求输出fileout.txt。 
+输入：无空格的字符串 
+输出：将filein.txt删除输入的字符串(不区分大小写),输出至fileout.txt 
+sample 
+输入:in 
+输出:将filein.txt 中的In、IN、iN、in删除,每行中的空格全部提前至行首,输出至fileout.txt 
+
+#include<stdio.h>
+#include<string.h>
+#include<ctype.h>
+int main(){
+    char ch,tp,a[1000],b[1000];
+	int len,i,j;
+	while(~scanf("%s",a)){
+    len =strlen(a);
+	FILE *fp=fopen("data.txt","r");
+	FILE *out=fopen("output.txt","w");
+	while((ch=fgetc(fp))!=EOF){
+		if(tolower(ch)==tolower(a[0])){//全变小写
+			for(i=1;i<len;i++){
+		       tp=fgetc(fp);
+			   b[i-1]=tp;//防止不匹配
+			   if(tolower(tp)!=tolower(a[i])){//若不匹配
+                    fputc(ch,out);//输出a[0]
+					for(j=0;j<i;j++)//补全剩下的
+						if(b[j]!=' ')fputc(b[j],out);
+					break;
+			   }
+			}
+		}
+		else if(ch!=' ')fputc(ch,out);
+	}
+    fclose(fp);fclose(out);
+	}
+	return 0;
+}
