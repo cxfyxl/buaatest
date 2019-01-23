@@ -1,0 +1,61 @@
+1.两个整数数组（无序，可有重复元素），判断两个整数数组是否完全相同（重复元素的话，重复次数也要相同）
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<set>
+using namespace std;
+int main(){
+	set<int> st1,st2;
+	int n,m,i,a,b[1000];
+	st1.clear();st2.clear();
+	set<int>::iterator it1,it2;
+	cin>>n;
+	for(i=0;i<n;i++)
+		cin>>a,st1.insert(a);
+	cin>>m;
+	for(i=0;i<m;i++)
+		cin>>a,st2.insert(a);
+	bool f=0;
+    if(st1.size()==st2.size()){
+		for(it1=st1.begin(),it2=st2.begin();it1!=st1.end();it2++,it1++)
+			if(*it1!=*it2){
+				f=1;
+				cout<<"not equal"<<endl;
+				break;
+			}
+		if(!f)cout<<"equal"<<endl;
+	}
+    else cout<<"not equal"<<endl;
+	return 0;
+}
+
+2.输入几个学生的姓名和成绩 然后按照规定的格式 按照成绩的高低 顺序输出
+#include<stdio.h>
+#include<stdlib.h>
+typedef struct In{
+    int data;
+    char name[10];
+}IN;
+int cmp(const void *a,const void *b)
+{
+    return (*(IN*)a).data>(*(IN*)b).data?1:-1;//决定你是升序还是降序
+}
+int main()
+{
+    //FILE *fp=stdout;
+    //freopen("data.txt","r",stdin);
+    //freopen("out.txt","w",stdout);
+    IN s[50];
+    int i;
+    for(i=0;i<50;i++)
+    {
+        scanf("%s%d",s[i].name,&s[i].data);
+    }
+    qsort(s,50,sizeof(IN),cmp);
+    for(i=0;i<50;i++)
+    {
+        printf("%s %d\n",s[i].name,s[i].data);
+    }
+    return 0;
+}
+
